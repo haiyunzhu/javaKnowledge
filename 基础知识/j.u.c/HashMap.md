@@ -6,15 +6,54 @@ hashMap是key-value形式的存储，key经过hash后与数组初始长度进行
 
 <img width="700" height="400" src="https://user-images.githubusercontent.com/16397120/118498284-730a6c00-b758-11eb-96bc-45b4621285c2.png"/>
 
+- 方法
+  - put()
+  
+     将key进行hash运算后得到的hash值，与数组长度进行与运算，得到的结果即是对应的数组位置。
+      ```
+      (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
+      ```
+      如果该数组所在位置为空，则初始化Node，如果有值，这时有两种情况：
+      1）是同一个key，若是同一个key，则进行覆盖；判断是否是同一个key，其实是判断是否是同一个对象的问题，具体代码如下：
+      ```
+        if (p.hash == hash &&
+            ((k = p.key) == key || (key != null && key.equals(k))))
+            e = p;
+      ```
+      2）不是同一个key，需要进行hash冲突解决，将新的k-v插入到该数组索引所在的链表中。至于插到哪个位置，jdk7和jdk8是不一样的。
+      put完之后，将size+1，若++size超过了阈值，则进行扩容。 
+  
+    - jdk7及之前
+      
+      把新的键值对放到链表的头部
+      ```
+        void createEntry(int hash, K key, V value, int bucketIndex) {
+          Entry<K,V> e = table[bucketIndex];
+          table[bucketIndex] = new Entry<>(hash, key, value, e);
+          size++;
+        }
+      ```
+    
+    - jdk8
+      
+      jdk8引入了红黑树，当链表长度不超过8，则插入链表尾部；若超过8，则插入到红黑树中。
+      ```
+        p.next = newNode(hash, key, value, null);
+      ```
+      
+  
+  - get()
+  - resize()
+    
+    
+
+get过程
 - jdk7.hashMap
   - put过程
-  将key进行hash运算后得到的hash值，与数据长度进行与运算，如果值为空，则初始化Node，如果有值，则进行hash冲突解决。
-  ```
-  (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16)
-  ```
   
-  
+ 
   - get过程
+  - 扩容过程
 - jdk7.concurrentHashMap
 - jdk8.hashMap
 - jdk8.concurrentHashMap
