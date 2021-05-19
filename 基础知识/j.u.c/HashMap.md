@@ -1,4 +1,5 @@
   > 平时工作中用到的最频繁的集合类就是j.u.c下的集合类，主要有List、Set、Map等。下面来详细介绍下面试频率最高的集合HashMap及ConcurrentHashMap。
+- 成员变量
 - 数据结构
 
 hashMap底层数据结构由数组+链表构成，jdk8后又加了红黑树，红黑树主要是为了解决链表长度过长影响查询性能，
@@ -40,10 +41,16 @@ hashMap是key-value形式的存储，key经过hash后与数组初始长度进行
       ```
         p.next = newNode(hash, key, value, null);
       ```
+    - 区别
+
+      jdk7和jdk8区别有两点：1、插入链表位置不同，jdk7插入到链表头部，jdk8插入到链表尾部。2、jdk8引入红黑树。
       
   
   - get()
+  
   - resize()
+    
+    当我们执行put()方式，把元素插入到集合后，会判断当前容量是否超过设定的阈值变量threshold，若超过则进行扩容resize()。扩容操作涉及到两个点：1、
     
     
 
