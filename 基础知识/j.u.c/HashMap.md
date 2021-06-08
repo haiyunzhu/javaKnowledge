@@ -52,7 +52,15 @@ hashMap是key-value形式的存储，key经过hash后与数组初始长度进行
       
   
   - get()
-    计算key的hash值，然后和数组长度进行**与**运算，得到所在的数组位置，接着判断hash值和key是否都相等，若相等，则返回该值对应的value，若不相等，则遍历链表重复之前的操作。这里要讲下，hash和key进行比较时用到的==和equals
+
+
+    计算key的hash值，然后和数组长度进行**与**运算，得到所在的数组位置，接着判断hash值和key是否都相等，若相等，则返回该值对应的value，若不相等，则遍历链表重复之前的操作。这里要讲下，hash和key进行比较时用到的==和equals。<br>
+    这里简单讲下"=="和equals。equals是父类Object的方法，里面就是用==来实现的。实际涉及到需要比较的子类，一般用是否是同一个成员变量来进行判断，因此会进行重写equals()方法。两者区别是equals用来比较是否是同一个对象，同一个对象”==“一定相等，而”==”用来比较地址是否相同，地址相同的可能不是同一个对象。重写equals/hashcode? 面试基础知识时，可能会问到equals和==区别。
+  
+  ```
+      first.hash == hash && // always check first node
+      ((k = first.key) == key || (key != null && key.equals(k)))
+  ```
   
   - resize()
     
