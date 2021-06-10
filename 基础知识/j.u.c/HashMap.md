@@ -53,12 +53,10 @@ hashMap是key-value形式的存储，key经过hash后与数组初始长度进行
   
   - get()
 
-
     计算key的hash值，然后和数组长度进行**与**运算，得到所在的数组位置，接着判断hash值和key是否都相等，若相等，则返回该值对应的value，若不相等，则遍历链表重复之前的操作。这里要讲下，hash和key进行比较时用到的==和equals。<br>
-    这里简单讲下"=="和equals。equals是父类Object的方法，里面就是用==来实现的。实际涉及到需要比较的子类，一般用是否是同一个成员变量来进行判断，因此会进行重写equals()方法，**重写equals()方法需要重写hashcode()** ，为什么呢？因为重写了equals()方法后，我们认为两个相同的对象不再是地址相同的了，而是满足equals()方法，而相同对象hashcode()一定是相同的，如果不重写hashcode，可能会出现我们认定是相同的对象的hashcode值不相等，这违背了“两个相同的对象，hashcode一定相等”。
-
-    <br>两者区别是equals用来比较是否是同一个对象，同一个对象”==“一定相等，而”==”用来比较地址是否相同，地址相同的可能不是同一个对象。重写equals/hashcode? 面试基础知识时，可能会问到equals和==区别。
-  
+    这里简单讲下"=="和equals。equals是父类Object的方法，里面就是用==来实现的，"=="用来比较地址是否相同。实际应用场景中涉及到需要比较的子类，一般用是否是同一个成员变量来进行判断，因此会进行重写equals()方法，**重写equals()方法需要重写hashcode()** ，为什么呢？因为重写了equals()方法后，我们认为两个相同的对象不再是地址相同的了，而是满足equals()方法，而相同的对象hashcode()一定是相同的，原生hashcode()是基于内存地址生成的，如果不重写hashcode，可能会出现我们认定是相同的对象的hashcode值不相等，这违背了“两个相同的对象，hashcode一定相等”。<br>综上，hashcode相等的不一定是同一个对象，两个不同的对象hashcode有可能是相同的。equals()方法相等的一定是同一个对象。<br>
+    这里再回到最初判断根据key获取value,判断key是否是同一个对象，其实可以只用**key.equals(k)** 来判断，但实际上至多只有一个结果是我们想要的，所以为了提高效率，加上了hashcode的比较和key的比较，能够剔出大量不满足条件的值。
+    
   ```
       first.hash == hash && // always check first node
       ((k = first.key) == key || (key != null && key.equals(k)))
@@ -77,18 +75,22 @@ hashMap是key-value形式的存储，key经过hash后与数组初始长度进行
     2.不需要移动所有的数，减少迁移成本；<br>
 如果不采取扩容为原来的2倍，也是可以的，只是hash碰撞会相对比较高，会迁移更多数据。
 
+-线程安全问题
 
-    
-    
-    
-    
-    
-    
+  在分析完put()、get()、resize()方法后，我们来看下hashMap为什么不是线程安全的，在并发环境下哪些操作会导致线程不安全。
+  同时put
+  ```
+    if ((e = p.next) == null) { // #1
+                    p.next = newNode(hash, key, value, null); // #2
+                    if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+  ```
   
-    
-
-    
-    
+  
+  同时put/get
+  
 
 get过程
 - jdk7.hashMap
